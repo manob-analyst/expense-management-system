@@ -3,7 +3,9 @@ from datetime import date
 import db_helper
 from typing import List
 from pydantic import BaseModel
-app= FastAPI()
+app = FastAPI()
+
+
 class Expense(BaseModel):
     amount: float
     category: str
@@ -12,6 +14,8 @@ class Expense(BaseModel):
 class DateRange(BaseModel):
     start_date: date
     end_date: date
+
+
 
 
 @app.get("/expenses/{expense_date}", response_model=List[Expense])
@@ -29,7 +33,7 @@ def add_or_update_expenses(expense_date: date, expenses: List[Expense]):
         db_helper.insert_expense(expense_date, expense.amount, expense.category, expense.notes)
     return {"message": "Expense updated successfully"}
 
-@app.post("/analytics/")
+@app.post("/analytics by category/")
 def get_analytics(date_range: DateRange):
     data=db_helper.fetch_expense_summary(date_range.start_date, date_range.end_date)
     if data is None:
@@ -46,4 +50,12 @@ def get_analytics(date_range: DateRange):
 
     return breakdown
 
+@app.post("/analytics-by-month")
+def analytics_by_month(data: DateRange):
 
+
+    return {
+        "August": {"total": 51230},
+        "September": {"total": 7985},
+        "October": {"total": 33232}
+    }
